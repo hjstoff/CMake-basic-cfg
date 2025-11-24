@@ -8,7 +8,7 @@ The script "build+config.sh" is the simplest way to (re-)build the release and
 debug versions.
 
 Doxyfile is a Doxygen configuration file configured for generating manual pages
-documentations from inline comments in source files.
+documentation only (no html, etc) from inline comments in source files.
 
 To use CMakeLists.txt.template:
 - Define a real project name (instead of myproject), and possibly adjust also
