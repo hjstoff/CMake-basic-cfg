@@ -1,5 +1,9 @@
 README.txt
 
+This repository contains the basic setup for a CMake C/C++ project on a
+GNU/Linux platform, using the gcc / g++ compilers
+
+
 To use CMakeLists.txt.template:
 - Define a real project name (instead of myproject), and possibly adjust also
   the version in the project command.
