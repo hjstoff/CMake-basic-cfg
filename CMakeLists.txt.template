@@ -1,0 +1,114 @@
+#
+# CMake template with boilerplate for support libraries:
+# - ctre
+# - threads
+# - OpenMP
+# - SQLite3
+# 
+# - This CMakeLists.txt template and associated CMakePresets.json file is
+#   specifically tuned for project buildable and runnable on Snellius nodes.
+#   Compiler and linker options are configured with hardening options
+#   recommended for progream that run with a privileged UID, maybe even in
+#   SETUID mode.
+#   The lowest os-release found on Snellius nodes: RHEL 9.2 nodes (on Snellius
+#   "sys" nodes).
+# - OS related version requirements for CMake, compilers, libraries, etc.
+#   for this version of the template was last checked, tested, and updated
+#   accordingly on Snellius, on 20250626.
+#
+cmake_minimum_required(VERSION 3.20)
+project(myproject VERSION 1.0 LANGUAGES C CXX)
+
+#
+# Version check using custom MYCOMPILER_... variables defined in the
+# CMakePresets.json file. This will only execute once the toolchain is
+# determined by CMake
+#
+if(DEFINED MY_COMPILER_ID_REQUIRED AND DEFINED MY_COMPILER_MINIMUM_VERSION)
+	if(NOT CMAKE_CXX_COMPILER_ID STREQUAL MY_COMPILER_ID_REQUIRED)
+		message(FATAL_ERROR "This preset requires '${MY_COMPILER_ID_REQUIRED}' compiler, but '${CMAKE_CXX_COMPILER_ID}' was found.")
+	endif()
+	if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS MY_COMPILER_MINIMUM_VERSION)
+		message(FATAL_ERROR "This preset requires ${MY_COMPILER_ID_REQUIRED} version ${MY_COMPILER_MINIMUM_VERSION} or newer. Found version: ${CMAKE_CXX_COMPILER_VERSION}")
+	endif()
+endif()
+
+#
+# N.B.: The GCC compiler is not the issue for C17 support, but CMake v. 3.20
+#       does not know how to generate flags for C17!
+#
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+#
+# N.B.:
+# link_libraries() is probably the cleanest approach for adding project-wide
+# support for a package that has both compiler flags (e.g. specific "pragmas")
+# and a runtime library component. link_libraries() automatically handles both
+# the compiler flags and library linking.
+# The command applies to all subsequent targets, so for project-wide
+# (directory-wide) support, targets must specified only after this statement.
+# If specific targets are to be singled out the link_libaries() construct
+# is not the most appropriate one. In that case, the target_link_libraries()
+# specification is suggested.
+#
+
+#
+# On GNU/Linux platforms both OpenMP threads as well as C++ standard library
+# threads and jthreads are implemented on POSIX threads (pthreads).
+# On platforms that support pthreads this should suffice to include pthreads
+# support. For C++ native threads, although built on pthreads, this should not
+# even be necessary, as they are part of the C++ standard library. So,
+# specifying C++20 as the required language standard should be sufficient for
+# working with C++ jthreads, and C++11 should be sufficient for C++ native
+# threads.
+#
+find_package(Threads REQUIRED)
+link_libraries(Threads::Threads)
+
+#
+# OpenMP support, specific minimum version and language bindings for C and C++.
+#
+find_package(OpenMP 4.5 REQUIRED COMPONENTS C CXX)
+link_libraries(OpenMP::OpenMP_C)
+link_libraries(OpenMP::OpenMP_CXX)
+
+#
+# SQLite3 support
+#
+find_package(SQLite3 REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(SQLite3 REQUIRED sqlite3>=3.34.1)
+link_libraries(${SQLite3_LIBRARIES})
+add_compile_options(${SQLite3_CFLAGS})
+if(SQLite3_CXXFLAGS)
+	add_compile_options(${SQLite3_CXXFLAGS})
+endif()
+link_libraries(SQLite::SQLite3)
+
+#
+# CTRE (compile time regular expressions) support
+# On 20250606 release #27, v3.10.0 is the latest greatest release of ctre. 
+#
+include(FetchContent)
+FetchContent_Declare(
+        ctre
+        GIT_REPOSITORY https://github.com/hanickadot/compile-time-regular-expressions.git
+        GIT_TAG v3.10.0
+)
+FetchContent_MakeAvailable(ctre)
+#
+# Even though all of ctre is header-only, and linking in the proper sense is
+# not applicable, link_libraries() is required, as it also takes care of the
+# compile flags. To have a working "#include <ctre>" include statement in the
+# sources, the compiler must be invoked with -I<somedir> where <somedir>
+# denotes the path where CMake put the stuff it fetched from github.
+#
+link_libraries(ctre::ctre)
+
+### Add executables and their source file dependencies here, by means of the add_executable command:
+#
+# add_executable(<executable-name> <sourcefile-1.cpp>  <sourcefile-2.cpp>)
+#
