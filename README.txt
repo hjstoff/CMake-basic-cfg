@@ -1,8 +1,14 @@
 README.txt
 
 This repository contains the basic setup for a CMake C/C++ project on a
-GNU/Linux platform, using the gcc / g++ compilers
+GNU/Linux platform, using the gcc / g++ compilers. Building a "release" and a
+"debug" version is configured.
 
+The script "build+config.sh" is the simplest way to (re-)build the release and
+debug versions.
+
+Doxyfile is a Doxygen configuration file configured for generating manual pages
+documentations from inline comments in source files.
 
 To use CMakeLists.txt.template:
 - Define a real project name (instead of myproject), and possibly adjust also
