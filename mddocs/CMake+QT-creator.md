@@ -1,3 +1,8 @@
+# Notes on CMake as the project configuration system for the QT Creator IDE
+
+N.B.: Several of these notes have come about by initially querying an AI system
+(Claude), and subsequently testing - and possiblyu correcting - them.
+
 Qt Creator 16.x has excellent support for CMake projects with CMakePresets.json
  files, and you can import your existing project with minimal or no changes
 to your configuration.
