@@ -1,18 +1,14 @@
-# snellius-workernodes
+# CMake basic configuration reference system
 
-## Snellius', and its current OS distribution, is the primary target and reference system
-Project "snellius-workernodes", is a prototypical experiment for developing and building
-programs written in C++, and possibly in C, and configured with CMake.
+## ' Snellius', and its current OS distribution, is the primary target and reference system
+are the primary reference system for the programming projects that use this setup for
+developing and building programs written in C++, and possibly in C, and configured with
+CMake.
 
-The project is named "snellius-workernodes", after the primary platform that the programs
-are developed for: "Snellius" the current Dutch national supercomputer for academia.
+"Snellius.surf.nl" is the current Dutch national supercomputer for academia.
 "Snellius" currently (May/June 2025) is a cluster of GNU/Ĺinux nodes currently configured
-with version 9.x of the RHEL operating system distribution.
-
-Snellius consists mostly of batch nodes, workernodes. This project by design is restricted
-to handling data concerning workernode names and workernode types of Snellius, and related
-attributes that pertain to analyzing and reporting of "downtime", or "non-availablility: 
-of the production environment.   
+with version 9.x of the RHEL operating system distribution. Several of the settings 
+stem from restrictions and requirements pertaining tho this reference system.
 
 ### Restrictions on versions of the tooling 
 One important requirement for the programs built with this project configuration
@@ -81,5 +77,6 @@ CTRE library developed by Hana Dusíková.
 The downloading and configuration of the libary, so that it can be used by a simple
 `#include <ctre.hpp>` preprocessor directive in the project's source files, is
 arranged in the `CMakeLists.txt` configuration file.
+
 
 For more details see: `Using CTRE.md`
