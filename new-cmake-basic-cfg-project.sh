@@ -161,13 +161,40 @@ make_new_projectdir()
 		errmsg "[E] Failed to initialize git repository in '$1'!"
 		exit 1
 	fi
-	local submodule_dirname="${SUBMODULE_URL##*/}" 
-	submodule_dirname="${submodule_dirnam%.git}" 
+	local submoduledir="${SUBMODULE_URL##*/}" 
+	submoduledir="${submoduledir%.git}" 
 	if ! "${GIT}" submodule add "${SUBMODULE_URL}" 
 	then
 		errmsg "[E] failed to add '${SUBMODULE_URL}' as a submodule to '$1'!"
 		exit 1
 	fi
+
+	local fail=0
+	if ! ${CP} "${submoduledir}/CMakeLists.txt.template" ./CMakeLists.txt 
+	then
+		fail=1
+		errmsg "[E] failed to copy '${submoduledir}/CMakeLists.txt.template' to './CMakeLists.txt'!"
+	fi
+	if ! ${CP} "${submoduledir}/CMakePresets.json.template" ./CMakePresets.json
+	then
+		fail=1
+		errmsg "[E] failed to copy '${submoduledir}/CMakePresets.json.template' to './CMakePresets.json'!"
+	fi
+	if ! ${CP} "${submoduledir}/config+build.sh" ./config+build.sh
+	then
+		fail=1
+		errmsg "[E] failed to copy '${submoduledir}/config+build.sh' to './config+build.sh'!"
+	fi
+	if ! ${CP} "${submoduledir}/Doxyfile" ./Doxyfile
+	then
+		fail=1
+		errmsg "[E] failed to copy '${submoduledir}/Doxyfile' to './Doxyfile'!"
+	fi
+	if [[ $fail -ne 0 ]]
+	then
+		exit 1
+	fi
+
 }
 
 
